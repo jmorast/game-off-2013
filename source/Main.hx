@@ -3,18 +3,9 @@ package;
 import flash.display.Sprite;
 import openfl.Assets;
 import flash.events.Event;
-import flash.events.KeyboardEvent;
-import flash.ui.Keyboard;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import flash.filters.GlowFilter;
-import flash.geom.Matrix;
-import flash.display.LoaderInfo;
-import flash.display.Loader;
 import flash.display.Bitmap;
-import flash.net.URLRequest;
-import flash.system.Security;
-import flash.media.SoundTransform;
 
 import flash.events.MouseEvent;
 
@@ -34,7 +25,7 @@ class Main extends Sprite {
 		var cashbox025 = new MyCash(400,600,.25);	
 		
 		// Display some text
-		var titleText = new MyText(140, 50, 40, 0xffffff, 'Busy Barista', true);
+		var titleText = new MyText(140, 50, 40, 0xffffff, 'Busy Barista');
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
 	}
@@ -92,7 +83,7 @@ class MyCash extends Sprite {
 class MyText {
 	public var textObj:TextField;
 
-	public function new(x:Int, y:Int, size:Int, color:Int, text:String, glow:Bool) {
+	public function new(x:Int, y:Int, size:Int, color:Int, text:String) {
 		this.textObj = new TextField();
 		this.textObj.x = x;
 		this.textObj.y = y;
@@ -101,9 +92,6 @@ class MyText {
 		this.textObj.embedFonts = true; 
 		this.textObj.text = text;
 		this.textObj.width = 640;
-		if(glow) {
-			this.textObj.filters = [ new  GlowFilter(0xaa0000, 1.0, 6, 6, 6, 6, false, false) ];
-		}
 		flash.Lib.current.addChild(this.textObj);
 	}
 
