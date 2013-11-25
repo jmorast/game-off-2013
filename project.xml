@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="Busy Barista" package="com.example.busyBarista" version="1.0.0" company="jdm" />
+	<app main="Main" path="Export" file="busyBarista" />
+	
+	<window width="600" height="800" />
+	<source path="source" />
+	
+	<haxelib name="openfl" />
+	
+	<assets path="assets" exclude="openfl.svg" />
+	<icon path="Assets/openfl.svg" />
+	
+</project>
