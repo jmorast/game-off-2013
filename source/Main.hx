@@ -40,47 +40,16 @@ class Main extends Sprite {
 	}
 
 	static function onEnterFrame() {
-	}
-}
-
-class Mymoney extends Sprite {
-
-	private var dragOffsetX:Float;
-	private var dragOffsetY:Float;
-
-	public function new () {
-		super();
-
-		addEventListener (MouseEvent.MOUSE_DOWN, this_onMouseDown);
-	}
-
-	// Event Handlers
-	private function this_onMouseDown (event:MouseEvent):Void {
-		stage.addEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
-		stage.addEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
-		dragOffsetX = x - mouseX;
-		dragOffsetY = y - mouseY;
-	}	
-
-	private function stage_onMouseMove (event:MouseEvent):Void {
-		// this might be cool later Actuate.tween (this, 0.4);
-		var targetX = mouseX + dragOffsetX;
-		var targetY = mouseY + dragOffsetY;
-		x = x + (targetX - x) * 0.5;
-		y = y + (targetY - y) * 0.5;
-	}
-
-
-	private function stage_onMouseUp (event:MouseEvent):Void {
-		stage.removeEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
-		stage.removeEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
+		// game loop
 	}
 }
 
 class MyCash extends Sprite {
 	private var gfx:Sprite;
 	public var value:Float;
-
+	private var dragOffsetX:Float;
+	private var dragOffsetY:Float;
+	
 	public function new(x:Float, y:Float, amount:Float) {
 		super();
 		
@@ -93,10 +62,31 @@ class MyCash extends Sprite {
 		gfx.addEventListener (MouseEvent.MOUSE_DOWN, this_onMouseDown);
 		flash.Lib.current.stage.addChild(gfx);
 	}
+
+	private function stage_onMouseMove (event:MouseEvent):Void {
+		// this might be cool later Actuate.tween (this, 0.4);
+		trace('Mouse Drag');
+		var targetX = mouseX + dragOffsetX;
+		var targetY = mouseY + dragOffsetY;
+		gfx.x = gfx.x + (targetX - gfx.x) * 0.5;
+		gfx.y = gfx.y + (targetY - gfx.y) * 0.5;
+	}
+
+	private function stage_onMouseUp (event:MouseEvent):Void {
+		trace('Mouse Up');
+		gfx.removeEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
+		gfx.removeEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
+	}
 	
 	private function this_onMouseDown(event:MouseEvent):Void {
 		// this might be cool later Actuate.tween (this, 0.4);
 		trace('Mouse event' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
+	//	var moneymover = new MyCash(mouseX,mouseY,value);
+		gfx.addEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
+		gfx.addEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
+		dragOffsetX = gfx.x - mouseX;
+		dragOffsetY = gfx.y - mouseY;
+		
 	}
 }
 
