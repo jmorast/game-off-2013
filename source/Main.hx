@@ -37,15 +37,8 @@ class Main extends Sprite {
 		var titleText = new MyText(140, 50, 40, 0xffffff, 'Busy Barista', true);
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
-		flash.Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, this_onMouseDown);
 	}
 
-	private function this_onMouseDown (event:MouseEvent):Void {
-		trace('Mouse event' + mouseX + ' : ' + mouseY);
-		
-		//var newCash = new MyCash(mouseX,mouseY,1);
-	}	
-	
 	static function onEnterFrame() {
 	}
 }
@@ -85,18 +78,11 @@ class Mymoney extends Sprite {
 }
 
 class MyCash extends Sprite {
-//	private var gfx:flash.display.Bitmap;
 	private var gfx:Sprite;
 	public var value:Float;
 
 	public function new(x:Float, y:Float, amount:Float) {
 		super();
-		
-//		this.gfx = new Bitmap(Assets.getBitmapData("assets/money-" + amount + ".png"));
-//		this.gfx.x = x - (this.gfx.width / 2);
-//		this.gfx.y = y - (this.gfx.height / 2);
-//		this.value = amount;
-//		flash.Lib.current.addChild(this.gfx);
 		
 		var img = new Bitmap(Assets.getBitmapData("assets/money-" + amount + ".png"));
 		gfx = new Sprite();
@@ -110,7 +96,7 @@ class MyCash extends Sprite {
 	
 	private function this_onMouseDown(event:MouseEvent):Void {
 		// this might be cool later Actuate.tween (this, 0.4);
-		trace('XXXXXXXXMouse event' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
+		trace('Mouse event' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
 	}
 }
 
