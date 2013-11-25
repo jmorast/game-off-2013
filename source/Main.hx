@@ -80,8 +80,7 @@ class MyCash extends Sprite {
 	
 	private function this_onMouseDown(event:MouseEvent):Void {
 		// this might be cool later Actuate.tween (this, 0.4);
-		trace('Mouse event' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
-	//	var moneymover = new MyCash(mouseX,mouseY,value);
+		trace('Mouse Down:' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
 		gfx.addEventListener (MouseEvent.MOUSE_MOVE, stage_onMouseMove);
 		gfx.addEventListener (MouseEvent.MOUSE_UP, stage_onMouseUp);
 		dragOffsetX = gfx.x - mouseX;
