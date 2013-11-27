@@ -11,50 +11,80 @@ class CashDrawer extends Sprite {
 	
 	public function new () {
 		super ();
-		
-		// Put cash in the cash drawer
-		var cashbox1 = new MyCash(100,500,1);	
-		var cashbox5 = new MyCash(200,500,5);	
-		var cashbox10 = new MyCash(300,500,10);	
-		var cashbox20 = new MyCash(400,500,20);	
-		var cashbox001 = new MyCash(100,600,.01);	
-		var cashbox005 = new MyCash(200,600,.05);	
-		var cashbox010 = new MyCash(300,600,.10);	
-		var cashbox025 = new MyCash(400,600,.25);	
+		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
+		var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
+ 		var drawerY : Array<Float> = [600,600,600,600,500,500,500,500];
+
+		// Put cash in cashbox drawer	
+		for ( i in 0...drawervalues.length ) {
+			var cashbox = new MyCash(drawerX[i],drawerY[i],drawervalues[i]);
+		}
 	}
 
 	static function onEnterFrame() {
 		// game loop
+	}
+	
+	public function returnvalue(value:Float) {
+		trace('value is here? ' + value + ' is this right ');
+		
 	}
 }
 
 private class CashMove extends Sprite {
 	private var gfx:Sprite;
 	public var value:Float;
-	var kittyY : Float = 650;
-	var kittyX : Float = 250;
+	public var initX:Float;
+	public var initY:Float;
 
-	public function new(x:Float, y:Float, amount:Float) {
+	public function new(fromX:Float, fromY:Float, toX:Float, toY:Float, amount:Float) {
 		super();
 		
 		var img = new Bitmap(Assets.getBitmapData("assets/money-" + amount + ".png"));
 		gfx = new Sprite();
-		gfx.x = x - (this.gfx.width / 2);
-		gfx.y = y - (this.gfx.height / 2);
+		gfx.x = fromX - (this.gfx.width / 2);
+		gfx.y = fromY - (this.gfx.height / 2);
+		initX = gfx.x;
+		initY = gfx.y;
 		value = amount;
 		gfx.addChild(img);
 		flash.Lib.current.stage.addChild(gfx);
-		Actuate.tween (gfx, 1, { x:kittyX, y:kittyY});
-		// Actuate.tween (gfx, 1, { x:kittyX, y:kittyY}).onComplete (trace, 'Tween finished');
+		Actuate.tween (gfx, 1, { x:toX, y:toY}).onComplete (inKitty);
+	}
+
+	private function inKitty():Void {
+		trace('In Kitty:');
+		gfx.addEventListener (MouseEvent.MOUSE_DOWN, this_onMouseDown);
+	}
+	private function inHand():Void {
+		trace('In Hand:');
+		Actuate.tween (gfx, .1, { alpha:1 }).onComplete (removegfx);
+	}
+
+	function removegfx():Void {
+		flash.Lib.current.stage.removeChild(gfx);
+	}
+	
+	private function this_onMouseDown(event:MouseEvent):Void {
+//		trace('value is here? ' + value + ' is this right ' + Lambda.indexOf(drawervalues,value));
+		trace('what variables do we have' + value);
+		gfx.removeEventListener(MouseEvent.MOUSE_DOWN, this_onMouseDown);
+		Actuate.tween (gfx, 1, { x:initX, y:initY}).onComplete (inHand);
 	}
 }
 
 private class MyCash extends Sprite {
 	private var gfx:Sprite;
 	public var value:Float;
+	public var initX:Float;
+	public var initY:Float;
+	public var kittyY : Float = 650;
+	public var kittyX : Float = 250;
 	
 	public function new(x:Float, y:Float, amount:Float) {
 		super();
+		initX = x;
+		initY = y;
 		
 		var img = new Bitmap(Assets.getBitmapData("assets/money-" + amount + ".png"));
 		gfx = new Sprite();
@@ -69,10 +99,8 @@ private class MyCash extends Sprite {
 	private function this_onMouseDown(event:MouseEvent):Void {
 		// this might be cool later Actuate.tween (this, 0.4);
 		trace('Mouse Down:' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
-		// Actuate.tween (gfx, 1, { alpha:0.0 });
-//		Actuate.tween (gfx, 1, { x:kittyX, y:kittyY});
-		var fun = new  CashMove(mouseX, mouseY, value);
-		
+		trace('Mouse Down:' + initX + ' : ' + initY + ' VALUE: ' + value);
+		var fun = new  CashMove(initX,initY,kittyX,kittyY, value);
 	}
 }
 

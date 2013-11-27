@@ -13,6 +13,9 @@ class Main extends Sprite {
 	
 	public function new () {
 		super ();
+	    var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
+                var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
+                var drawerY : Array<Float> = [600,600,600,600,500,500,500,500];
 		
 		// Display some text
 		var titleText = new MyText(140, 50, 40, 0xffffff, 'Busy Barista');
