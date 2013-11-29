@@ -13,7 +13,7 @@ class CashDrawer extends Sprite {
 		super ();
 		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
 		var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
- 		var drawerY : Array<Float> = [600,600,600,600,500,500,500,500];
+ 		var drawerY : Array<Float> = [600,600,600,600,450,450,450,450];
 
 		// Put cash in cashbox drawer	
 		for ( i in 0...drawervalues.length ) {
@@ -78,7 +78,7 @@ private class MyCash extends Sprite {
 	public var value:Float;
 	public var initX:Float;
 	public var initY:Float;
-	public var kittyY : Float = 650;
+	public var kittyY : Float = 700;
 	public var kittyX : Float = 250;
 	
 	public function new(x:Float, y:Float, amount:Float) {
@@ -97,10 +97,9 @@ private class MyCash extends Sprite {
 	}
 
 	private function this_onMouseDown(event:MouseEvent):Void {
-		// this might be cool later Actuate.tween (this, 0.4);
-		trace('Mouse Down:' + mouseX + ' : ' + mouseY + ' VALUE: ' + value);
-		trace('Mouse Down:' + initX + ' : ' + initY + ' VALUE: ' + value);
-		var fun = new  CashMove(initX,initY,kittyX,kittyY, value);
+		//trace('Mouse Down:' + initX + ' : ' + initY + ' VALUE: ' + value);
+		
+		var tmpMove = new  CashMove(initX,initY,kittyX - (gfx.width / 2) + (Math.random() * 20),kittyY - (gfx.height/2) + (Math.random() *20), value);
 	}
 }
 
