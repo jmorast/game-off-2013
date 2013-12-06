@@ -32,6 +32,10 @@ class Main extends Sprite {
 		//add(Registry.CashBox);
 	}
 
+	public function dosomething() {
+		trace('mike wins');
+	}
+
 	static function onEnterFrame() {
 		// game loop
 	}
