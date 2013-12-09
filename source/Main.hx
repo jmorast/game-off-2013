@@ -7,13 +7,12 @@ import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.display.Bitmap;
-
 import flash.events.MouseEvent;
+import MyCash;
 
 class Main extends Sprite {
 	static var AllMoney:Array<MyCash> = new Array();
 	static var MoneyInKitty:Float=0;
-	statis var DEBUG:Bool=true;
 	public function new () {
 		super ();
 		

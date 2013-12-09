@@ -10,7 +10,7 @@ import flash.display.Bitmap;
 
 import flash.events.MouseEvent;
 
-private class MyCash extends Sprite {
+class MyCash extends Sprite {
         private var gfx:Sprite;
         public var value:Float;
         public var gameloc:String;
