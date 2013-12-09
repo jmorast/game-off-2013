@@ -14,25 +14,24 @@ class Main extends Sprite {
 	public function new () {
 		super ();
 		
-	var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
-	var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
-	var drawerY : Array<Float> = [600,600,600,600,450,450,450,450];
 		// Display some text
 		var titleText = new MyText(140, 50, 40, 0xff00ff, 'Busy Barista');
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
+		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
+		var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
+		var drawerY : Array<Float> = [600,600,600,600,450,450,450,450];
 		// keep score
 		var fun = new KittyHandler();
                 
 		// Put cash in cashbox drawer
                 for ( i in 0...drawervalues.length ) {
 	                var cashbox = new MyCash(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER");
-//	                addCash(drawerX[i],drawerY[i],drawervalues[i]);
                 }
 
 	}
 
-	public static function kittyHandlerx(operation:String, value:Float) {
+	public static function kittyMan(operation:String, value:Float) {
 		//public var kittyTotal:Float = 0;	
 		trace('operation' + operation + ' value: ' + value);
 		if (operation == 'ADD') {
@@ -69,38 +68,38 @@ private class MyCash extends Sprite {
         public var kittyY : Float = 700;
         public var kittyX : Float = 250;
 
-        public function new(x:Float, y:Float, amount:Float, location:String) {
+	public function new(x:Float, y:Float, amount:Float, location:String) {
                 super();
-                initX = x;
-                initY = y;
 
+		//thisdoesnotwork 	fun.addToKitty(this.value);
+		//thisworksbutisirrelevent		Main.kittyMan("ADD",value);
                 var img = new Bitmap(Assets.getBitmapData("assets/money-" + amount + ".png"));
                 gfx = new Sprite();
                 gfx.x = x - (this.gfx.width / 2);
                 gfx.y = y - (this.gfx.height / 2);
+                initX = x;
+                initY = y;
                 value = amount;
 		gameloc = location;	
                 gfx.addChild(img);
                 gfx.addEventListener (MouseEvent.MOUSE_DOWN, this_onMouseDown);
                 flash.Lib.current.stage.addChild(gfx);
 		if ( gameloc == "KITTY") {
-//                	Actuate.tween (gfx, 1, { (kittyX - (gfx.width/2) + (Math.random() * 20)), (kittyY - (gfx.height/2) + (Math.random()*20))}).onComplete (inKitty);
-                	Actuate.tween (gfx, 1, { x:200,y:200 }).onComplete (inKitty);
+                	Actuate.tween (gfx, 1, { x:(kittyX - (gfx.width/2) + (Math.random() * 20)), y:(kittyY - (gfx.height/2) + (Math.random()*20))}).onComplete (inKitty);
 		}
         }
         
 	private function inKitty():Void {
                 trace('In Kitty:' + this.value);
-//thisdontworkyet		fun.addToKitty(this.value);
                 gfx.addEventListener (MouseEvent.MOUSE_DOWN, this_onMouseDown);
         }
 
         private function this_onMouseDown(event:MouseEvent):Void {
-                //trace('Mouse Down:' + initX + ' : ' + initY + ' VALUE: ' + value);
+                trace('Mouse Down:' + this.initX + ' : ' + this.initY + ' VALUE: ' + this.value);
 		if (gameloc == 'CASHDRAWER') {
-                	var tmpMove = new MyCash(initX,initY, value, "KITTY");
+                	var funk = new MyCash(this.initX,this.initY, this.value, "KITTY");
 		} else if (gameloc == 'KITTY') {
-                	Actuate.tween (gfx, 1, { x:initX, y:initY}).onComplete (inHand);
+                	Actuate.tween (gfx, 1, { x:this.initX, y:this.initY}).onComplete (inHand);
 		}
         }
 	private function inHand():Void {
