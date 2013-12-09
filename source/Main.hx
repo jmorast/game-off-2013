@@ -12,6 +12,7 @@ import flash.events.MouseEvent;
 
 class Main extends Sprite {
 	static var AllMoney:Array<MyCash> = new Array();
+	static var MoneyInKitty:Float=0;
 	public function new () {
 		super ();
 		
@@ -19,12 +20,11 @@ class Main extends Sprite {
 		var titleText = new MyText(140, 50, 40, 0xff00ff, 'Busy Barista');
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
-		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
+//		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
+		var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
 		var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
-		var drawerY : Array<Float> = [600,600,600,600,450,450,450,450];
-		// keep score
-		var fun = new KittyHandler();
-                
+		var drawerY : Array<Float> = [500,500,500,500,350,350,350,350];
+
 		// Put cash in cashbox drawer
                 for ( i in 0...drawervalues.length ) {
 	                AllMoney.push(new MyCash(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
@@ -33,27 +33,26 @@ class Main extends Sprite {
 	}
 
 	static function onEnterFrame() {
-		// game loop		 
-		for ( x in 0...AllMoney.length ){
-			if (AllMoney[x].clicked) {
-				trace(" this value has been clicked" + AllMoney[x].value);
+		// game loop	
+		for ( i in 0...AllMoney.length ){
+			if (AllMoney[i].clicked) {
+				AllMoney[i].clicked = false;
+				if (AllMoney[i].gameloc == "CASHDRAWER") {
+					MoneyInKitty+=AllMoney[i].value;
+					//trace("Cash Drawer value clicked: " + AllMoney[i].value + " X:Y " + AllMoney[i].initX + ":" + AllMoney[i].initY);
+					// add money and move it to kitty
+					trace("MoneyInKitty: " + MoneyInKitty);
+					AllMoney.push(new MyCash(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
+				} else {
+					trace("Kitty value clicked: " + AllMoney[i].value);
+					MoneyInKitty-=AllMoney[i].value;
+					trace("MoneyInKitty: " + MoneyInKitty);
+				}
 			}
 		}
 	}
-
-}
-
-class KittyHandler {
 	
-	public var amountInKitty:Float=0;
-	public function new() {
-		trace('KittyHandler added');
-		amountInKitty=0;
-	}
-	public function addToKitty(value:Float) {
-		trace('add: ' + value);
-		amountInKitty += value;
-	}
+
 }
 
 private class MyCash extends Sprite {
@@ -62,15 +61,14 @@ private class MyCash extends Sprite {
         public var gameloc:String;
         public var initX:Float;
         public var initY:Float;
-        public var kittyY : Float = 700;
+        //public var kittyY : Float = 700;
+//        public var kittyX : Float = 250;
+        public var kittyY : Float = 600;
         public var kittyX : Float = 250;
 	public var clicked:Bool = false;
 
 	public function new(x:Float, y:Float, amount:Float, location:String) {
                 super();
-
-		//thisdoesnotwork 	fun.addToKitty(this.value);
-		//thisworksbutisirrelevent		Main.kittyMan("ADD",value);
                 var img = new Bitmap(Assets.getBitmapData("assets/money-" + amount + ".png"));
                 gfx = new Sprite();
                 gfx.x = x - (this.gfx.width / 2);
@@ -94,13 +92,8 @@ private class MyCash extends Sprite {
 
         private function this_onMouseDown(event:MouseEvent):Void {
                 trace('Mouse Down:' + this.initX + ' : ' + this.initY + ' VALUE: ' + this.value);
-		if (gameloc == 'CASHDRAWER') {
-                	//var funk = new MyCash(this.initX,this.initY, this.value, "KITTY");
-//	                Main.AllMoney.push(new MyCash(this.initX,this.initY,this.value, "KITTY"));
-			trace('something got clicked with value ' + value);
-			clicked=true;
-			trace('clicked is ' + clicked);
-		} else if (gameloc == 'KITTY') {
+		clicked=true;
+		if (gameloc == 'KITTY') {
                 	Actuate.tween (gfx, 1, { x:this.initX, y:this.initY}).onComplete (inHand);
 		}
         }
