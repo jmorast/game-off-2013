@@ -29,12 +29,11 @@ class Main extends Sprite {
                 for ( i in 0...drawervalues.length ) {
 	                AllMoney.push(new MyCash(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
                 }
-
+		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
 	}
 
 	static function onEnterFrame() {
-		// game loop		 -- obviously this is not being called just yet...
-		trace('testing...');
+		// game loop		 
 		for ( x in 0...AllMoney.length ){
 			if (AllMoney[x].clicked) {
 				trace(" this value has been clicked" + AllMoney[x].value);
