@@ -11,6 +11,7 @@ import flash.display.Bitmap;
 import flash.events.MouseEvent;
 
 class Main extends Sprite {
+	static var AllMoney:Array<MyCash> = new Array();
 	public function new () {
 		super ();
 		
@@ -26,22 +27,19 @@ class Main extends Sprite {
                 
 		// Put cash in cashbox drawer
                 for ( i in 0...drawervalues.length ) {
-	                var cashbox = new MyCash(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER");
+	                AllMoney.push(new MyCash(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
                 }
 
 	}
 
-	public static function kittyMan(operation:String, value:Float) {
-		//public var kittyTotal:Float = 0;	
-		trace('operation' + operation + ' value: ' + value);
-		if (operation == 'ADD') {
-			//kittyTotal += value;
-			trace('ADD');
-		}
-	}
-
 	static function onEnterFrame() {
-		// game loop
+		// game loop		 -- obviously this is not being called just yet...
+		trace('testing...');
+		for ( x in 0...AllMoney.length ){
+			if (AllMoney[x].clicked) {
+				trace(" this value has been clicked" + AllMoney[x].value);
+			}
+		}
 	}
 
 }
@@ -67,6 +65,7 @@ private class MyCash extends Sprite {
         public var initY:Float;
         public var kittyY : Float = 700;
         public var kittyX : Float = 250;
+	public var clicked:Bool = false;
 
 	public function new(x:Float, y:Float, amount:Float, location:String) {
                 super();
@@ -97,7 +96,11 @@ private class MyCash extends Sprite {
         private function this_onMouseDown(event:MouseEvent):Void {
                 trace('Mouse Down:' + this.initX + ' : ' + this.initY + ' VALUE: ' + this.value);
 		if (gameloc == 'CASHDRAWER') {
-                	var funk = new MyCash(this.initX,this.initY, this.value, "KITTY");
+                	//var funk = new MyCash(this.initX,this.initY, this.value, "KITTY");
+//	                Main.AllMoney.push(new MyCash(this.initX,this.initY,this.value, "KITTY"));
+			trace('something got clicked with value ' + value);
+			clicked=true;
+			trace('clicked is ' + clicked);
 		} else if (gameloc == 'KITTY') {
                 	Actuate.tween (gfx, 1, { x:this.initX, y:this.initY}).onComplete (inHand);
 		}
