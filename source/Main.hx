@@ -8,16 +8,16 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.display.Bitmap;
 import flash.events.MouseEvent;
-import MyCash;
+//import MyCash;
 
 class Main extends Sprite {
-	static var AllMoney:Array<MyCash> = new Array();
+	static var AllMoney:Array<CashHandler> = new Array();
 	static var MoneyInKitty:Float=0;
 	public function new () {
 		super ();
 		
 		// Display some text
-		var titleText = new MyText(140, 50, 40, 0xff00ff, 'Busy Barista');
+		var titleText = new UIText(140, 50, 40, 0xff00ff, 'Busy Barista');
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
 //		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
@@ -27,7 +27,7 @@ class Main extends Sprite {
 
 		// Put cash in cashbox drawer
                 for ( i in 0...drawervalues.length ) {
-	                AllMoney.push(new MyCash(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
+	                AllMoney.push(new CashHandler(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
                 }
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
 	}
@@ -42,7 +42,7 @@ class Main extends Sprite {
 					//trace("Cash Drawer value clicked: " + AllMoney[i].value + " X:Y " + AllMoney[i].initX + ":" + AllMoney[i].initY);
 					// add money and move it to kitty
 					trace("MoneyInKitty: " + MoneyInKitty);
-					AllMoney.push(new MyCash(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
+					AllMoney.push(new CashHandler(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
 				} else {
 					trace("Kitty value clicked: " + AllMoney[i].value);
 					MoneyInKitty-=AllMoney[i].value;

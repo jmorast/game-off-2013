@@ -9,7 +9,7 @@ import flash.display.Bitmap;
 
 import flash.events.MouseEvent;
 
-class MyText {
+class UIText {
 	public var textObj:TextField;
 
 	public function new(x:Int, y:Int, size:Int, color:Int, text:String) {
