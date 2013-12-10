@@ -13,6 +13,8 @@ import flash.events.MouseEvent;
 class Main extends Sprite {
 	static var AllMoney:Array<CashHandler> = new Array();
 	static var MoneyInKitty:Int=0;
+	var CustomerOwes:Int=0;
+	var CustomerPaid:Int=0;
 	public function new () {
 		super ();
 		
@@ -31,9 +33,29 @@ class Main extends Sprite {
                 }
 
 		// Add a customer
+		CustomerOwes = Std.random(1000) ;
+		trace("Cust Owes: " + CustomerOwes);
+		var TextCustomerOwes = new UIText(70,150,40, 0xff00ff, "Customer Owes: $" + getDollars(CustomerOwes) + "." + getCents(CustomerOwes) );
+		CustomerPaid = 1000;
+		var TextCustomerPaid = new UIText(70,100,40, 0xff00ff, "Customer Paid: $" + CustomerPaid/100);
 		
-
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
+
+	}
+	public function getDollars(cashIn:Int):String {
+		if (cashIn > 100) {
+			return Std.string(cashIn).substr(0,1);
+		} else {
+			return "0";
+		}
+	}
+
+	function getCents(centsIn:Int):String {
+		if (centsIn > 100) {
+			return Std.string(centsIn).substr(1,2);
+		} else {
+			return Std.string(centsIn);
+		}
 	}
 
 	static function onEnterFrame() {
