@@ -12,7 +12,7 @@ import flash.events.MouseEvent;
 
 class Main extends Sprite {
 	static var AllMoney:Array<CashHandler> = new Array();
-	static var MoneyInKitty:Float=0;
+	static var MoneyInKitty:Int=0;
 	public function new () {
 		super ();
 		
@@ -20,8 +20,8 @@ class Main extends Sprite {
 		var titleText = new UIText(140, 50, 40, 0xff00ff, 'Busy Barista');
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
-//		var drawervalues : Array<Float> = [.01,.05,.10,.25,1,5,10,20];
-		var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
+//		var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
+		var drawervalues : Array<Int> = [25,10,5,1,2000,1000,500,100];
 		var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
 		var drawerY : Array<Float> = [500,500,500,500,350,350,350,350];
 
@@ -29,18 +29,22 @@ class Main extends Sprite {
                 for ( i in 0...drawervalues.length ) {
 	                AllMoney.push(new CashHandler(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
                 }
+
+		// Add a customer
+		
+
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
 	}
 
 	static function onEnterFrame() {
 		// game loop	
+		// Deal with money
 		for ( i in 0...AllMoney.length ){
 			if (AllMoney[i].clicked) {
 				AllMoney[i].clicked = false;
 				if (AllMoney[i].gameloc == "CASHDRAWER") {
-					MoneyInKitty+=AllMoney[i].value;
-					//trace("Cash Drawer value clicked: " + AllMoney[i].value + " X:Y " + AllMoney[i].initX + ":" + AllMoney[i].initY);
 					// add money and move it to kitty
+					MoneyInKitty+=AllMoney[i].value;
 					trace("MoneyInKitty: " + MoneyInKitty);
 					AllMoney.push(new CashHandler(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
 				} else {
@@ -51,7 +55,5 @@ class Main extends Sprite {
 			}
 		}
 	}
-	
-
 }
 
