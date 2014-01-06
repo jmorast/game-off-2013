@@ -8,74 +8,144 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.display.Bitmap;
 import flash.events.MouseEvent;
-//import MyCash;
 
 class Main extends Sprite {
-	static var AllMoney:Array<CashHandler> = new Array();
+
+        static var AllMoney:Array<CashHandler> = new Array();
+	static var customerGFX:Sprite;
+	static var gfxCustomer:Sprite;
+	static var gfxYes:Sprite;
+	static var gfxNo:Sprite;
 	static var MoneyInKitty:Int=0;
 	var CustomerOwes:Int=0;
 	var CustomerPaid:Int=0;
+	var CustomerNeeds:Int=0;
+
 	public function new () {
 		super ();
 		
 		// Display some text
-		var titleText = new UIText(140, 50, 40, 0xff00ff, 'Busy Barista');
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
-//		var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
+		//var titleText = new UIText(140, 50, 40, 0xff00ff, 'Busy Barista');
+		
+		//var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
 		var drawervalues : Array<Int> = [25,10,5,1,2000,1000,500,100];
-		var drawerX : Array<Float> = [100,200,300,400,100,200,300,400];
+		var drawerX : Array<Float> = [50,100,150,200,50,100,150,200];
 		var drawerY : Array<Float> = [500,500,500,500,350,350,350,350];
 
-		// Put cash in cashbox drawer
+	        // Put cash in cashbox drawer
                 for ( i in 0...drawervalues.length ) {
-	                AllMoney.push(new CashHandler(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
+                        AllMoney.push(new CashHandler(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
                 }
 
-		// Add a customer
+		// Add UI
+		createUI();
+
+		// Customer starts order
 		CustomerOwes = Std.random(1000) ;
-		trace("Cust Owes: " + CustomerOwes);
-		var TextCustomerOwes = new UIText(70,150,40, 0xff00ff, "Customer Owes: $" + getDollars(CustomerOwes) + "." + getCents(CustomerOwes) );
-		CustomerPaid = 1000;
-		var TextCustomerPaid = new UIText(70,100,40, 0xff00ff, "Customer Paid: $" + CustomerPaid/100);
-		
+
+                trace("Cust Owes: " + CustomerOwes);
+                CustomerPaid = 1000;
+		CustomerNeeds = CustomerPaid - CustomerOwes;
+                var TextCustomerPaid = new UIText(30,100,40, 0x5DE627, "Customer Paid: $10.00");
+                var TextCustomerOwes = new UIText(30,150,40, 0x5DE627, "Customer Owes: $" + getDollars(CustomerOwes) + "." + getCents(CustomerOwes) );
+                var TextCustomerNeeds = new UIText(30,200,40, 0x5DE627, "Customer Needs: $" + getDollars(CustomerNeeds) + "." + getCents(CustomerNeeds) );
+         
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
 
 	}
-	public function getDollars(cashIn:Int):String {
-		if (cashIn > 100) {
-			return Std.string(cashIn).substr(0,1);
-		} else {
-			return "0";
-		}
-	}
 
-	function getCents(centsIn:Int):String {
-		if (centsIn > 100) {
-			return Std.string(centsIn).substr(1,2);
-		} else {
-			return Std.string(centsIn);
-		}
-	}
+      public function createUI() {
+		// Add customer image
+		trace('Add customer');
+                var customerIMG = new Bitmap(Assets.getBitmapData("assets/customer.png"));
+                gfxCustomer = new Sprite();
+                gfxCustomer.x = 50; 
+                gfxCustomer.y = 10;
+                gfxCustomer.addChild(customerIMG);
+                flash.Lib.current.stage.addChild(gfxCustomer);
 
-	static function onEnterFrame() {
-		// game loop	
-		// Deal with money
-		for ( i in 0...AllMoney.length ){
-			if (AllMoney[i].clicked) {
-				AllMoney[i].clicked = false;
-				if (AllMoney[i].gameloc == "CASHDRAWER") {
-					// add money and move it to kitty
-					MoneyInKitty+=AllMoney[i].value;
-					trace("MoneyInKitty: " + MoneyInKitty);
-					AllMoney.push(new CashHandler(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
-				} else {
-					trace("Kitty value clicked: " + AllMoney[i].value);
-					MoneyInKitty-=AllMoney[i].value;
-					trace("MoneyInKitty: " + MoneyInKitty);
-				}
+		// Add yes button
+                var yesIMG = new Bitmap(Assets.getBitmapData("assets/yes.png"));
+                gfxYes = new Sprite();
+                gfxYes.x = 400; 
+                gfxYes.y = 300;
+                gfxYes.addChild(yesIMG);
+		gfxYes.addEventListener (MouseEvent.MOUSE_DOWN, yes_onMouseDown);
+                flash.Lib.current.stage.addChild(gfxYes);
+
+		// Add no button
+                var noIMG = new Bitmap(Assets.getBitmapData("assets/no.png"));
+                gfxNo = new Sprite();
+                gfxNo.x = 400; 
+                gfxNo.y = 400;
+                gfxNo.addChild(noIMG);
+		gfxNo.addEventListener (MouseEvent.MOUSE_DOWN, no_onMouseDown);
+                flash.Lib.current.stage.addChild(gfxNo);
+
+      }
+      private function no_onMouseDown(event:MouseEvent):Void {
+                trace('clicked no') ;
+		clearKitty();
+      } 
+      private function yes_onMouseDown(event:MouseEvent):Void {
+                trace('clicked yes check needs vs moneyinkitty' ) ;
+		trace('Kitty: ' + MoneyInKitty);
+		trace('Customer Needs: ' + CustomerNeeds);
+		if (MoneyInKitty == CustomerNeeds) {
+			trace('Congrats you did it!');
+		} else {
+			trace('oops not quite');
+			clearKitty();
+		}
+		
+      } 
+
+      public function getDollars(cashIn:Int):String {
+                if (cashIn > 100) {
+                        return Std.string(cashIn).substr(0,1);
+                } else {
+                        return "0";
+                }
+        }
+
+        function getCents(centsIn:Int):String {
+                if (centsIn > 100) {
+                        return Std.string(centsIn).substr(1,2);
+                } else {
+                        return Std.string(centsIn);
+                }
+        }
+
+	function clearKitty() {
+		for (i in 0...AllMoney.length ) {
+			if (AllMoney[i].gameloc == 'KITTY') {
+				trace(AllMoney[i].value);
 			}
 		}
 	}
+
+
+
+	static function onEnterFrame() {
+                // game loop        
+                // Deal with money
+                for ( i in 0...AllMoney.length ){
+                        if (AllMoney[i].clicked) {
+                                AllMoney[i].clicked = false;
+                                if (AllMoney[i].gameloc == "CASHDRAWER") {
+                                        // add money and move it to kitty
+                                        MoneyInKitty+=AllMoney[i].value;
+                                        trace("MoneyInKitty: " + MoneyInKitty);
+                                        AllMoney.push(new CashHandler(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
+                                } else {
+                                        trace("Kitty value clicked: " + AllMoney[i].value);
+                                        MoneyInKitty-=AllMoney[i].value;
+                                        trace("MoneyInKitty: " + MoneyInKitty);
+                                }
+                        }
+                }
+        }
 }
 

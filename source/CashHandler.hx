@@ -16,8 +16,6 @@ class CashHandler extends Sprite {
         public var gameloc:String;
         public var initX:Float;
         public var initY:Float;
-        //public var kittyY : Float = 700;
-//        public var kittyX : Float = 250;
         public var kittyY : Float = 600;
         public var kittyX : Float = 250;
 	public var clicked:Bool = false;
@@ -52,10 +50,12 @@ class CashHandler extends Sprite {
                 	Actuate.tween (gfx, 1, { x:this.initX, y:this.initY}).onComplete (inHand);
 		}
         }
+
 	private function inHand():Void {
                 //trace('In Hand:' + this.value);
                 Actuate.tween (gfx, .1, { alpha:1 }).onComplete (removegfx);
         }
+
         function removegfx():Void {
 		//trace('Remove ' + value);
                 flash.Lib.current.stage.removeChild(gfx);
