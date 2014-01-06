@@ -32,7 +32,8 @@ class Main extends Sprite {
 		
 		//var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
 		var drawervalues : Array<Int> = [25,10,5,1,2000,1000,500,100];
-		var drawerX : Array<Float> = [50,100,150,200,50,100,150,200];
+		//var drawerX : Array<Float> = [50,100,150,200,50,100,150,200];
+        var drawerX : Array<Float> = [40,95,150,205,40,95,150,205];
 		var drawerY : Array<Float> = [500,500,500,500,350,350,350,350];
 
         // Put cash in cashbox drawer
@@ -62,7 +63,7 @@ class Main extends Sprite {
 		trace('Add customer');
         var customerIMG = new Bitmap(Assets.getBitmapData("assets/customer.png"));
         gfxCustomer = new Sprite();
-        gfxCustomer.x = 50; 
+        gfxCustomer.x = 400; 
         gfxCustomer.y = 10;
         gfxCustomer.addChild(customerIMG);
         flash.Lib.current.stage.addChild(gfxCustomer);
@@ -71,7 +72,7 @@ class Main extends Sprite {
         var yesIMG = new Bitmap(Assets.getBitmapData("assets/yes.png"));
         gfxYes = new Sprite();
         gfxYes.x = 400; 
-        gfxYes.y = 300;
+        gfxYes.y = 400;
         gfxYes.addChild(yesIMG);
 		gfxYes.addEventListener (MouseEvent.MOUSE_DOWN, yes_onMouseDown);
         flash.Lib.current.stage.addChild(gfxYes);
@@ -80,15 +81,15 @@ class Main extends Sprite {
         var noIMG = new Bitmap(Assets.getBitmapData("assets/no.png"));
         gfxNo = new Sprite();
         gfxNo.x = 400; 
-        gfxNo.y = 400;
+        gfxNo.y = 500;
         gfxNo.addChild(noIMG);
 		gfxNo.addEventListener (MouseEvent.MOUSE_DOWN, no_onMouseDown);
         flash.Lib.current.stage.addChild(gfxNo);
 
       }
     private function no_onMouseDown(event:MouseEvent):Void {
-        trace('clicked no') ;
-		clearKitty();
+        trace('clicked ClearKitty') ;
+		clearKitty("CASHDRAWER");
       } 
       
     private function yes_onMouseDown(event:MouseEvent):Void {
@@ -97,9 +98,10 @@ class Main extends Sprite {
 		trace('Customer Needs: ' + CustomerNeeds);
 		if (MoneyInKitty == CustomerNeeds) {
 			trace('Congrats you did it!');
+            clearKitty('CUSTOMER');
 		} else {
 			trace('oops not quite');
-			clearKitty();
+			//clearKitty();
 		}
 		
       } 
@@ -120,47 +122,29 @@ class Main extends Sprite {
         }
     }
 
-	function clearKitty() {
+	function clearKitty(target:String) {
 		for (i in 0...AllMoney.length ) {
 			if (AllMoney[i].gameloc == 'KITTY') {
 				// trace(AllMoney[i].value);
+                if (target == "CASHDRAWER") {
+                    if (AllMoney[i].value > 0) {
+                        AllMoney[i].moveAndDelete(AllMoney[i].initX,AllMoney[i].initY);
+                    }
+                } else {
+                    if (AllMoney[i].value > 0) {
+                        AllMoney[i].moveAndDelete(gfxCustomer.x,gfxCustomer.y);
+                    }
+                }
 			}
-            trace('Loc - ' + AllMoney[i].gameloc + ' val: ' + AllMoney[i].value);
+            //trace('Loc - ' + AllMoney[i].gameloc + ' val: ' + AllMoney[i].value);
+            MoneyInKitty = 0;
 		}    
 	}
-
-    static function pruneArray() {
-        var tmpArray:Array<CashHandler> = [];
-        var delArray:Array<CashHandler> = [];
-        trace("len - " + AllMoney.length);
-        for (i in 0...AllMoney.length) {
-            if (AllMoney[i].pruneMe == false) {
-                trace("copying" + AllMoney[i].value);
-                tmpArray.push(AllMoney.shift());
-                trace("testing tmparray val - " + tmpArray);
-            } else {
-                trace("pruned" + AllMoney[i].value);
-                delArray.push(AllMoney.shift());
-            }
-        }
-        for (i in 0...tmpArray.length) {
-            AllMoney.push(tmpArray.shift());
-        }
-    }
 
 	static function onEnterFrame() {
         // game loop        
         // Deal with money
-       /*if (toPrune) {
-            pruneArray();
-        }
-        for ( i in 0...AllMoney.length) {
-            if (AllMoney[i].pruneMe) {
-                toPrune=true;
 
-            }  
-        }
-        */
         for ( i in 0...AllMoney.length ){
             if (AllMoney[i].clicked) {
                 AllMoney[i].clicked = false;
