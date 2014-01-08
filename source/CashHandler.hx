@@ -59,6 +59,7 @@ class CashHandler extends Sprite {
     public function moveAndDelete(xTarget:Float, yTarget:Float) {
         this.removeEventListener(MouseEvent.MOUSE_DOWN, inKitty_onMouseDown);
         Actuate.tween (gfx, 1, { x:xTarget, y:yTarget }).onComplete (inHand);
+        this.pruneMe=true;
     }
 
     private function inHand():Void {
@@ -68,9 +69,11 @@ class CashHandler extends Sprite {
 
     function removegfx():Void {
         //trace('Remove ' + value);
-        this.pruneMe=true;
+        //this.pruneMe=true;
         this.value = 0;
         flash.Lib.current.stage.removeChild(gfx);
     }
+
+
 }
 

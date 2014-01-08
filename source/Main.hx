@@ -12,10 +12,8 @@ import flash.events.MouseEvent;
 class Main extends Sprite {
 
     static var AllMoney:Array<CashHandler> = new Array();
-	static var customerGFX:Sprite;
 	static var gfxCustomer:Sprite;
-	static var gfxYes:Sprite;
-	static var gfxNo:Sprite;
+    static var gfxCountDown:Sprite;
 	static var MoneyInKitty:Int=0;
 	var CustomerOwes:Int=0;
 	var CustomerPaid:Int=0;
@@ -24,7 +22,10 @@ class Main extends Sprite {
 
 	public function new () {
 		super ();
-		
+
+        // Add UI
+        createUI();	
+
 		// Display some text
 		trace('Debug Info: Stage Width = ' + stage.stageWidth);
 
@@ -32,7 +33,6 @@ class Main extends Sprite {
 		
 		//var drawervalues : Array<Float> = [.25,.10,.05,.01,20,10,5,1];
 		var drawervalues : Array<Int> = [25,10,5,1,2000,1000,500,100];
-		//var drawerX : Array<Float> = [50,100,150,200,50,100,150,200];
         var drawerX : Array<Float> = [40,95,150,205,40,95,150,205];
 		var drawerY : Array<Float> = [500,500,500,500,350,350,350,350];
 
@@ -40,9 +40,6 @@ class Main extends Sprite {
         for ( i in 0...drawervalues.length ) {
                 AllMoney.push(new CashHandler(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
         }
-
-		// Add UI
-		createUI();
 
 		// Customer starts order
 		CustomerOwes = Std.random(1000) ;
@@ -56,9 +53,27 @@ class Main extends Sprite {
          
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
 
+        var orderTimer:haxe.Timer = new haxe.Timer(100);
+        orderTimer.run = function():Void{
+           // trace("test" + haxe.Timer.stamp());
+           // gfxCountDown.width= gfxCountDown.width - 1;
+        }
 	}
 
     public function createUI() {
+
+        // Add countdown clock
+        gfxCountDown = new Sprite();
+        gfxCountDown.graphics.beginFill(0xff00ff);
+        gfxCountDown.graphics.drawRect(0,0,600,100);
+        //gfxCountDown.endFill();
+        flash.Lib.current.stage.addChild(gfxCountDown);
+
+        var gfxCountDownRect:Sprite = new Sprite();
+        gfxCountDownRect.graphics.lineStyle(2,0xFF000000);
+        gfxCountDownRect.graphics.drawRect(0,0,600,100);
+        flash.Lib.current.stage.addChild(gfxCountDownRect);
+
 		// Add customer image
 		trace('Add customer');
         var customerIMG = new Bitmap(Assets.getBitmapData("assets/customer.png"));
@@ -69,8 +84,8 @@ class Main extends Sprite {
         flash.Lib.current.stage.addChild(gfxCustomer);
 
 		// Add yes button
+        var gfxYes:Sprite = new Sprite();
         var yesIMG = new Bitmap(Assets.getBitmapData("assets/yes.png"));
-        gfxYes = new Sprite();
         gfxYes.x = 400; 
         gfxYes.y = 400;
         gfxYes.addChild(yesIMG);
@@ -78,15 +93,16 @@ class Main extends Sprite {
         flash.Lib.current.stage.addChild(gfxYes);
 
 		// Add no button
+        var gfxNo:Sprite = new Sprite();
         var noIMG = new Bitmap(Assets.getBitmapData("assets/no.png"));
-        gfxNo = new Sprite();
         gfxNo.x = 400; 
         gfxNo.y = 500;
         gfxNo.addChild(noIMG);
 		gfxNo.addEventListener (MouseEvent.MOUSE_DOWN, no_onMouseDown);
         flash.Lib.current.stage.addChild(gfxNo);
 
-      }
+    }
+
     private function no_onMouseDown(event:MouseEvent):Void {
         trace('clicked ClearKitty') ;
 		clearKitty("CASHDRAWER");
@@ -125,7 +141,7 @@ class Main extends Sprite {
 	function clearKitty(target:String) {
 		for (i in 0...AllMoney.length ) {
 			if (AllMoney[i].gameloc == 'KITTY') {
-				// trace(AllMoney[i].value);
+				//trace(AllMoney[i].value);
                 if (target == "CASHDRAWER") {
                     if (AllMoney[i].value > 0) {
                         AllMoney[i].moveAndDelete(AllMoney[i].initX,AllMoney[i].initY);
@@ -136,14 +152,56 @@ class Main extends Sprite {
                     }
                 }
 			}
-            //trace('Loc - ' + AllMoney[i].gameloc + ' val: ' + AllMoney[i].value);
+            trace('Loc - ' + AllMoney[i].gameloc + ' val: ' + AllMoney[i].value);
             MoneyInKitty = 0;
 		}    
+        var is_c = function(x) { return x == false; }
+        //delete_if(AllMoney,is_c);
+        //delete_pruned(AllMoney);
+        
+
+        /*var remove: Array<CashHandler> = [];
+        for ( item in AllMoney ) {
+            if ( item.value == 0 ) {
+                trace('Add to prunelist ' + item.value);
+                remove.push( item );
+            }
+        }    
+        for ( item in remove ) {
+            trace('Remove from prunelist ' + item.value);
+            AllMoney.remove( item );
+        }  
+        */
 	}
+
+    public static function delete_prunedx( array: Array<CashHandler>)
+    {
+        var remove: Array<CashHandler> = [];
+        for ( item in array )
+            if ( item.pruneMe )
+                remove.push( item );
+        for ( item in remove )
+            array.remove( item );
+        //return array;
+    }
+
+    public static function delete_pruned() {
+        var remove: Array<CashHandler> = [];
+        for ( item in AllMoney )
+            if ( item.pruneMe )
+                remove.push( item );
+        for ( item in remove ) {
+            trace('deleting pruned items ' + item.value);
+            AllMoney.remove( item );
+        }
+    }
 
 	static function onEnterFrame() {
         // game loop        
         // Deal with money
+
+        // prune out old items
+        delete_pruned();
 
         for ( i in 0...AllMoney.length ){
             if (AllMoney[i].clicked) {
