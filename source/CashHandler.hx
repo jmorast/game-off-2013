@@ -7,7 +7,6 @@ import flash.events.Event;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.display.Bitmap;
-
 import flash.events.MouseEvent;
 
 class CashHandler extends Sprite {
@@ -42,7 +41,10 @@ class CashHandler extends Sprite {
 
     private function inCashDrawer_onMouseDown(event:MouseEvent):Void {
         //trace('Mouse Down:' + this.initX + ' : ' + this.initY + ' VALUE: ' + this.value);
-        clicked=true;
+        if (Main.playState == 'PLAYER') {
+            clicked=true;
+            trace("playstate = " + Main.playState);
+        }
     }
 
 	private function inKitty():Void {

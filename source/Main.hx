@@ -19,10 +19,20 @@ class Main extends Sprite {
 	var CustomerPaid:Int=0;
 	var CustomerNeeds:Int=0;
     static var toPrune:Bool=false;
+    public static var playState:String;
+        // Play states 
+        //   SETUP - compys turn
+        //   PLAYER - waiting for player to move
+    var TextCustomerPaid:UIText;
+    var TextCustomerOwes:UIText;
+    var TextCustomerNeeds:UIText;
 
 	public function new () {
 		super ();
 
+        // Set Initial Play State
+        playState = "SETUP";
+        
         // Add UI
         createUI();	
 
@@ -41,16 +51,12 @@ class Main extends Sprite {
                 AllMoney.push(new CashHandler(drawerX[i],drawerY[i],drawervalues[i],"CASHDRAWER"));
         }
 
-		// Customer starts order
-		CustomerOwes = Std.random(1000) ;
-
-        trace("Cust Owes: " + CustomerOwes);
-        CustomerPaid = 1000;
-        CustomerNeeds = CustomerPaid - CustomerOwes;
-        var TextCustomerPaid = new UIText(30,100,40, 0x5DE627, "Customer Paid: $10.00");
-        var TextCustomerOwes = new UIText(30,150,40, 0x5DE627, "Customer Owes: $" + getDollars(CustomerOwes) + "." + getCents(CustomerOwes) );
-        var TextCustomerNeeds = new UIText(30,200,40, 0x5DE627, "Customer Needs: $" + getDollars(CustomerNeeds) + "." + getCents(CustomerNeeds) );
-         
+        TextCustomerPaid = new UIText(30,100,40, 0x5DE627, "");
+        TextCustomerOwes = new UIText(30,150,40, 0x5DE627, "");
+        TextCustomerNeeds = new UIText(30,200,40, 0x5DE627, "" );
+        newCustomer();
+ 
+        playState = "PLAYER";
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME,function(_) Main.onEnterFrame());
 
         var orderTimer:haxe.Timer = new haxe.Timer(100);
@@ -106,21 +112,35 @@ class Main extends Sprite {
     private function no_onMouseDown(event:MouseEvent):Void {
         trace('clicked ClearKitty') ;
 		clearKitty("CASHDRAWER");
-      } 
-      
+    } 
+
     private function yes_onMouseDown(event:MouseEvent):Void {
         trace('clicked yes check needs vs moneyinkitty' ) ;
 		trace('Kitty: ' + MoneyInKitty);
 		trace('Customer Needs: ' + CustomerNeeds);
 		if (MoneyInKitty == CustomerNeeds) {
 			trace('Congrats you did it!');
+            playState = "SETUP";
             clearKitty('CUSTOMER');
+            newCustomer();
+            playState = 'PLAYER';
+     
 		} else {
 			trace('oops not quite');
 			//clearKitty();
 		}
 		
       } 
+
+    function newCustomer():Void {
+        CustomerOwes = Std.random(1000) ;
+        trace("New customer owes: " + CustomerOwes);
+        CustomerPaid = 1000;
+        CustomerNeeds = CustomerPaid - CustomerOwes;
+        TextCustomerPaid.updateText("Customer Paid: $10.00");
+        TextCustomerOwes.updateText( "Customer Owes: $" + getDollars(CustomerOwes) + "." + getCents(CustomerOwes));
+        TextCustomerNeeds.updateText( "Customer Needs: $" + getDollars(CustomerNeeds) + "." + getCents(CustomerNeeds));
+    }
 
     public function getDollars(cashIn:Int):String {
         if (cashIn > 100) {
@@ -139,9 +159,10 @@ class Main extends Sprite {
     }
 
 	function clearKitty(target:String) {
-		for (i in 0...AllMoney.length ) {
+        for (i in 0...AllMoney.length ) {
 			if (AllMoney[i].gameloc == 'KITTY') {
 				//trace(AllMoney[i].value);
+                //MoneyInKitty =- AllMoney[i].value;
                 if (target == "CASHDRAWER") {
                     if (AllMoney[i].value > 0) {
                         AllMoney[i].moveAndDelete(AllMoney[i].initX,AllMoney[i].initY);
@@ -153,69 +174,39 @@ class Main extends Sprite {
                 }
 			}
             trace('Loc - ' + AllMoney[i].gameloc + ' val: ' + AllMoney[i].value);
-            MoneyInKitty = 0;
+            MoneyInKitty=0;
 		}    
-        var is_c = function(x) { return x == false; }
-        //delete_if(AllMoney,is_c);
-        //delete_pruned(AllMoney);
-        
-
-        /*var remove: Array<CashHandler> = [];
-        for ( item in AllMoney ) {
-            if ( item.value == 0 ) {
-                trace('Add to prunelist ' + item.value);
-                remove.push( item );
-            }
-        }    
-        for ( item in remove ) {
-            trace('Remove from prunelist ' + item.value);
-            AllMoney.remove( item );
-        }  
-        */
 	}
 
-    public static function delete_prunedx( array: Array<CashHandler>)
-    {
-        var remove: Array<CashHandler> = [];
-        for ( item in array )
-            if ( item.pruneMe )
-                remove.push( item );
-        for ( item in remove )
-            array.remove( item );
-        //return array;
-    }
-
     public static function delete_pruned() {
-        var remove: Array<CashHandler> = [];
-        for ( item in AllMoney )
-            if ( item.pruneMe )
-                remove.push( item );
-        for ( item in remove ) {
-            trace('deleting pruned items ' + item.value);
-            AllMoney.remove( item );
+        for ( item in AllMoney ) {
+            if ( item.pruneMe ) {
+                AllMoney.remove(item);
+            }
         }
     }
 
 	static function onEnterFrame() {
-        // game loop        
-        // Deal with money
 
         // prune out old items
         delete_pruned();
 
-        for ( i in 0...AllMoney.length ){
-            if (AllMoney[i].clicked) {
-                AllMoney[i].clicked = false;
-                if (AllMoney[i].gameloc == "CASHDRAWER") {
-                        // Cash drawer was clicked, add money then move it to kitty
-                        MoneyInKitty+=AllMoney[i].value;
-                        trace("MoneyInKitty: " + MoneyInKitty);
-                        AllMoney.push(new CashHandler(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
-                } else {
-                        // Kitty item was clicked, remove money from kitty
-                        trace("Kitty value clicked: " + AllMoney[i].value);
-                        MoneyInKitty-=AllMoney[i].value;
-                        trace("MoneyInKitty: " + MoneyInKitty);
+        if ( playState == "PLAYER") {
+            // Handle clicks on CashDrawer or Kitty cash
+            for ( i in 0...AllMoney.length ){
+                if (AllMoney[i].clicked) {
+                    AllMoney[i].clicked = false;
+                    if (AllMoney[i].gameloc == "CASHDRAWER") {
+                            // Cash drawer was clicked, add money then move it to kitty
+                            MoneyInKitty+=AllMoney[i].value;
+                            trace("MoneyInKitty: " + MoneyInKitty);
+                            AllMoney.push(new CashHandler(AllMoney[i].initX,AllMoney[i].initY,AllMoney[i].value,"KITTY"));
+                    } else {
+                            // Kitty item was clicked, remove money from kitty
+                            MoneyInKitty-=AllMoney[i].value;
+                            //trace("Kitty value clicked: " + AllMoney[i].value);
+                            //trace("MoneyInKitty: " + MoneyInKitty);
+                    }
                 }
             }
         }
